@@ -15,6 +15,7 @@
   <!-- Стили -->
   <style>
     body {
+      overflow-y: auto;
       margin: 0;
       padding: 0;
       background-color: #0d1117;
@@ -29,7 +30,7 @@
       right: 0;
       display: flex;
       justify-content: center;
-      padding: 9px;
+      padding: 7px;
       background-color: #222;
       border-top: 2px solid #444;
       z-index: 1000;
@@ -146,13 +147,14 @@
       text-align: center;
       border-radius: 12px;
       color: white;
-      font-weight: 500;
+      font-weight: 650; /* или font-weight: bold; */
       font-size: 15px;
       transition: background-color 0.25s ease, color 0.25s ease;
       background: transparent;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
+    
     
     .mode-option:active {
       transform: none;
@@ -320,9 +322,9 @@
     </div>
 
     <div class="mode-selector">
-      <div class="mode-option active" data-price="35" data-link="https://t.me/$MjYLNVo_qEnwEQAAd447hz9BZzg">35★</div>
-      <div class="mode-option" data-price="50" data-link="https://t.me/$kGDQ9Fo_qEnxEQAAohJVUupaK4c">50★</div>
-      <div class="mode-option" data-price="100" data-link="https://t.me/$3GIyaVo_qEnjEQAATN9bFV6JHZQ">100★</div>
+      <div class="mode-option active" data-price="35" data-link="https://t.me/$ws8jxu__qUmiFAAA7b6QpssRL5Q">35★</div>
+      <div class="mode-option" data-price="50" data-link="https://t.me/$F0I5Hu__qUmjFAAAFpUn4VfYFhE">50★</div>
+      <div class="mode-option" data-price="150" data-link="https://t.me/$NnjESe__qUmkFAAAHGFO9zFrTu8">150★</div>
     </div>
 
     <div class="reel" id="reel">
@@ -358,10 +360,10 @@
 <!-- Переключатель вкладок -->
 <div class="tab-container">
   <div class="tab" onclick="changeTab(1)">
-    <img src="11163893.png" alt="Tab 1" />
+    <img src="3664550.png" alt="Tab 1" />
   </div>
-  <div class="tab" onclick="changeTab(2)">
-    <img src="7179866.png" alt="Tab 2" />
+  <div class="tab">
+    <img src="Монета.png" alt="Tab 2" />
   </div>
 </div>
 
