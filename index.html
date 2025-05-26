@@ -2,83 +2,122 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Case</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Рулетка и вкладки</title>
+
+  <!-- Подключаемые скрипты -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js"></script>
   <script src="https://unpkg.com/embla-carousel/embla-carousel.umd.js"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- Стили -->
   <style>
     body {
       margin: 0;
-      background: #0d1117;
+      padding: 0;
+      background-color: #0d1117;
       color: white;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: Arial, sans-serif;
     }
 
-    .header {
+    .tab-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      padding: 9px;
+      background-color: #222;
+      border-top: 2px solid #444;
+      z-index: 1000;
+    }
+
+    .tab {
+      width: 40px;
+      height: 40px;
+      margin: 0 15px;
+      background-color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 5px;
+    }
+
+    .tab:hover {
+      background-color: #555;
+    }
+
+    .tab.active {
+      background-color: #95cdff1e;
+      transform: scale(1.01);
+    }
+
+    .tab img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .tab-content {
+      display: none;
+      padding-bottom: 80px;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Стили для рулетки */
+    .top-bar {
       position: fixed;
       top: 0;
       left: 0;
-      right: 0;
-      height: 56px;
-      background-color: #161b22;
+      width: 100%;
+      background: #161b22;
+      padding: 6px 15px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 0 16px;
-      z-index: 999;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+      z-index: 1000;
+      border-bottom: 1px solid #2e2e2e;
     }
 
-    .profile {
-      display: flex;
-      align-items: center;
-    }
-
-    .profile img {
-      width: 32px;
-      height: 32px;
+    .top-bar img {
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      margin-right: 8px;
+      margin-right: 10px;
     }
 
-    .profile-name {
-      font-size: 15px;
-      font-weight: 500;
-    }
-
-    .balance {
+    .top-bar span {
       font-size: 16px;
-      color: gold;
-      font-weight: 600;
+      font-weight: bold;
     }
 
     .container {
+      padding: 69px 20px 20px;
       max-width: 600px;
       margin: 0 auto;
-      padding: 16px;
-      padding-top: 72px; /* отступ для шапки */
+      box-sizing: border-box;
     }
 
     .news-banner {
       width: 100%;
       height: 56px;
       background: linear-gradient(to right, #36bfff, #5e9fff);
-      border-radius: 16px;
+      border-radius: 15.5px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 16px;
       font-weight: 600;
       font-size: 16px;
-      margin-bottom: 20px;
+      margin-bottom: 12px;
       box-sizing: border-box;
-    }
-
-    .news-banner span {
-      color: rgb(255, 255, 255);
     }
 
     .news-banner button {
@@ -90,176 +129,386 @@
       font-weight: 600;
       cursor: pointer;
     }
-
-    .cards {
+  
+    .mode-selector {
       display: flex;
-      gap: 12px;
       justify-content: center;
-      flex-wrap: wrap;
+      background: #1c1c1e;
+      border-radius: 16px;
+      padding: 4px;
       margin-bottom: 12px;
+      gap: 4px;
+    }
+    
+    .mode-option {
+      flex: 1;
+      padding: 8px 0;
+      text-align: center;
+      border-radius: 12px;
+      color: white;
+      font-weight: 500;
+      font-size: 15px;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      background: transparent;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .mode-option:active {
+      transform: none;
+      background: transparent;
+    }
+    
+    .mode-option:focus {
+      outline: none;
+    }
+    
+    .mode-option.active {
+      background: #2c2c2e;
+    }
+    
+  
+    
+    
+    .reel {
+      position: relative;
+      width: 100%;
+      height: 130px;
+      overflow: hidden;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(6px);
+      margin-bottom: 20px;
     }
 
-    .card {
-      position: relative;
-      flex: 1 1 calc(50% - 6px);
-      max-width: calc(50% - 6px);
-      border-radius: 20px;
-      overflow: hidden;
+    .gifts-wrapper {
+      display: flex;
+      height: 100%;
+      align-items: center;
+      will-change: transform;
+    }
+
+    .gift {
+      width: 100px;
+      height: 100px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+      margin: 0 10px;
+    }
+
+    .gift img {
+      max-width: 90px;
+      max-height: 90px;
+    }
+
+    .pointer-line {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 4px;
+      height: 100%;
+      background: rgba(0,200,255,0.5);
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    button#spinButton {
+      background-color: #2ea1f8;
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 8px;
       cursor: pointer;
-      aspect-ratio: 1 / 1;
-      background: #bc9fff25;
+      width: 99%;
+      margin-bottom: 30px;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.908);
+      backdrop-filter: blur(45px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      flex-direction: column;
+    }
+
+    .modal-image {
+      max-width: 90%;
+      max-height: 60%;
+      object-fit: contain;
+      margin-top: -20px;
+      margin-bottom: 15px;
+    }
+
+    .modal h2 {
+      font-size: 24px;
+      color: #00ffcc;
+      margin: 0;
+    }
+
+    .modal button {
+      font-size: 16px;
+      margin-top: 30px;
+      padding: 10px 26px;
+      width: 90%;
+    }
+
+    .swipe-text {
+      font-size: 17px;
+      margin-bottom: 12px;
+      padding-left: 10px;
+      font-weight: bold;
+    }
+
+    .embla {
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .embla__container {
+      display: flex;
+    }
+
+    .embla__slide {
+      flex: 0 0 auto;
+      width: 70px;
+      height: 70px;
+      margin-right: 10px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .card img {
-      width: 80%;
-      height: 80%;
-      object-fit: cover;
-      display: block;
-      pointer-events: none;
-      margin-top: -9%;
+    .embla__slide img {
+      max-width: 60px;
+      max-height: 60px;
     }
 
-    .card span {
-      position: absolute;
-      bottom: 6px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.163);
-      padding: 4px 8px;
-      border-radius: 9px;
-      font-size: 14px;
-      font-weight: 500;
-      color: white;
-      user-select: none;
-    }
-
-    iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      border: none;
-      width: 100%;
-      height: 100%;
-      z-index: 10;
-      display: none;
+    .footer-text {
+      font-size: 12px;
+      color: #888;
+      text-align: center;
+      margin: 5% 0 10px;
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="profile">
-      <img id="profilePic" src="https://via.placeholder.com/32" alt="Avatar">
-      <span class="profile-name" id="profileName">User</span>
-    </div>
-    <div class="balance" id="userBalance">★0</div>
+  <!-- Вкладка 1 — Рулетка -->
+<div class="tab-content active" id="tab1">
+  <div class="top-bar">
+    <img id="profilePic" src="" alt="Profile Picture">
+    <span id="profileName">User</span>
   </div>
 
-  <div class="container" id="mainPage">
+  <div class="container">
     <div class="news-banner">
-      <span>Check our news</span>
-      <button onclick="window.open('https://t.me/voco_in', '_blank')">Open @voco_in</button>
+      <span>Check our news!</span>
+      <button onclick="window.location.href='https://t.me/voco_in'">Open @voco_in</button>
     </div>
 
-    <div class="cards">
-      <div class="card" onclick="openFreeBox()">
-        <img src="Pure Gold.png" alt="Free box" />
-        <span>ㅤFreeㅤ</span>
-      </div>
-      <div class="card" onclick="openRoulette()">
-        <img src="Hat Toss.png" alt="Case" />
-        <span>ㅤ35 ★ㅤ</span>
-      </div>
+    <div class="mode-selector">
+      <div class="mode-option active" data-price="35">35★</div>
+      <div class="mode-option" data-price="50">50★</div>
+      <div class="mode-option" data-price="100">100★</div>
+    </div>
+    
+    <div class="reel" id="reel">
+      <div class="pointer-line"></div>
+      <div class="gifts-wrapper" id="giftsTrack"></div>
+    </div>
 
-      <!-- Новые карточки -->
-      <div class="card" onclick="openExtraBox1()">
-        <img src="9rCyWkAz7WFyaN0.png" alt="Box 1" />
-        <span>ㅤ50 ★ㅤ</span>
-      </div>
-      <div class="card" onclick="openExtraBox2()">
-        <img src="U8z9ivaScNyJ86V.png" alt="Box 2" />
-        <span>ㅤ80 ★ㅤ</span>
-      </div>
-      <div class="card" onclick="openExtraBox3()">
-        <img src="pudbsohqxfD98gc.png" alt="Box 3" />
-        <span>ㅤ300 ★ㅤ</span>
-      </div>
-      <div class="card" onclick="openExtraBox4()">
-        <img src="Puss in Boots.png" alt="Box 4" />
-        <span>ㅤ450 ★ㅤ</span>
+    <!-- Твоя настоящая кнопка -->
+    <button id="spinButton">Try your luck 35★</button>
+
+    <div class="swipe-roulette-container">
+      <div class="swipe-text">What can I drop?</div>
+      <div class="embla" id="embla">
+        <div class="embla__container" id="emblaTrack"></div>
       </div>
     </div>
   </div>
 
-  <iframe id="rouletteFrame" src=""></iframe>
+  <div class="modal" id="modal" style="display:none;">
+    <img id="modalImage" class="modal-image" src="nothing_drop.png" alt="Prize image" style="display: block;">
+    <div class="modal-animation" id="modalLottie"></div>
+    <h2>Try your luck next time 🍀</h2>
+    <button id="closeModal">Закрыть</button>
+  </div>
 
-  <script>
-    function openRoulette() {
-      const iframe = document.getElementById("rouletteFrame");
-      iframe.src = "roulette.html";
-      iframe.style.display = "block";
-      document.getElementById("mainPage").style.display = "none";
-      history.pushState({ screen: "roulette" }, "", "#roulette");
-    }
+  <footer class="footer-text">© 2025 All rights reserved</footer>
+</div>
 
-    function openFreeBox() {
-      const iframe = document.getElementById("rouletteFrame");
-      iframe.src = "roulette1.html";
-      iframe.style.display = "block";
-      document.getElementById("mainPage").style.display = "none";
-      history.pushState({ screen: "freebox" }, "", "#freebox");
-    }
+<!-- Вкладка 2 -->
+<div class="tab-content" id="tab2">
+  <div style="padding: 40px 20px;">Контент для второй вкладки</div>
+</div>
 
-    // Новые обработчики
-    function openExtraBox1() {
-      openBoxWithSrc("roulette2.html", "box1");
-    }
+<!-- Переключатель вкладок -->
+<div class="tab-container">
+  <div class="tab active" onclick="changeTab(1)">
+    <img src="11163893.png" alt="Tab 1" />
+  </div>
+  <div class="tab" onclick="changeTab(2)">
+    <img src="7179866.png" alt="Tab 2" />
+  </div>
+</div>
 
-    function openExtraBox2() {
-      openBoxWithSrc("roulette3.html", "box2");
-    }
+<!-- Скрипты -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lottie-web/build/player/lottie.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/embla-carousel/embla.carousel.min.js"></script>
 
-    function openExtraBox3() {
-      openBoxWithSrc("roulette4.html", "box3");
-    }
+<script>
+  function changeTab(tabNumber) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.getElementById('tab' + tabNumber).classList.add('active');
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab')[tabNumber - 1].classList.add('active');
+  }
 
-    function openExtraBox4() {
-      openBoxWithSrc("box4.html", "box4");
-    }
-
-    function openBoxWithSrc(src, hash) {
-      const iframe = document.getElementById("rouletteFrame");
-      iframe.src = src;
-      iframe.style.display = "block";
-      document.getElementById("mainPage").style.display = "none";
-      history.pushState({ screen: hash }, "", `#${hash}`);
-    }
-
-    window.addEventListener("popstate", () => {
-      const iframe = document.getElementById("rouletteFrame");
-      iframe.style.display = "none";
-      iframe.src = "";
-      document.getElementById("mainPage").style.display = "block";
-    });
-
-    function updateProfile() {
-      if (window.Telegram && Telegram.WebApp) {
-        let user = Telegram.WebApp.initDataUnsafe?.user;
-        if (user) {
-          document.getElementById("profileName").textContent = user.first_name || "User";
-          if (user.photo_url) {
-            document.getElementById("profilePic").src = user.photo_url;
-          }
+  function updateProfile() {
+    if (window.Telegram && Telegram.WebApp) {
+      let user = Telegram.WebApp.initDataUnsafe?.user;
+      if (user) {
+        document.getElementById("profileName").textContent = user.first_name || "User";
+        if (user.photo_url) {
+          document.getElementById("profilePic").src = user.photo_url;
         }
       }
     }
+  }
 
-    window.addEventListener("DOMContentLoaded", () => {
-      updateProfile();
+  updateProfile();
+
+  const modalImage = document.getElementById("modalImage");
+  modalImage.src = "nothing_drop.png";
+  modalImage.style.display = "block";
+
+  const gifts = [
+    "1CHzB4K5FantEZu.png","680e5d8f8bf66.png","toTNAm2yurDAiqK.png","U8z9ivaScNyJ86V.png",
+    "Oj0IhQW5D5QyVFf.png","PQM9MVSTAF7sQ12.png",
+    "nothing_drop.png","pudbsohqxfD98gc.png","bvK9PmcyFgAh4gP.png","q2c0eUx5k8krA97.png"
+  ];
+
+  const giftsTrack = document.getElementById("giftsTrack");
+  const fullGifts = [];
+  for (let i = 0; i < 10; i++) fullGifts.push(...gifts);
+  fullGifts.forEach(g => {
+    const div = document.createElement("div"), img = document.createElement("img");
+    div.className = "gift";
+    img.src = g;
+    div.appendChild(img);
+    giftsTrack.appendChild(div);
+  });
+
+  let spinning = false;
+
+  const options = document.querySelectorAll('.mode-option');
+  const spinButton = document.getElementById('spinButton');
+  let selectedPrice = 35;
+
+  options.forEach(option => {
+    option.addEventListener('click', () => {
+      options.forEach(o => o.classList.remove('active'));
+      option.classList.add('active');
+
+      selectedPrice = +option.getAttribute('data-price');
+      spinButton.textContent = `Try your luck ${selectedPrice}★`;
     });
-  </script>
+  });
+
+  spinButton.addEventListener('click', () => {
+    if (spinning) return;
+
+    if (!window.Telegram || !Telegram.WebApp || !Telegram.WebApp.openInvoice) {
+      alert("Open Invoice доступен только внутри Telegram Web App");
+      return;
+    }
+
+    // Формируем payload, лучше сделать уникальным для каждого платежа
+    const payload = `roulette_payment_${selectedPrice}_${Date.now()}`;
+
+    // Здесь нужно вставить ваш provider_token для Telegram Payments
+    const provider_token = "ВАШ_PROVIDER_TOKEN";
+
+    Telegram.WebApp.openInvoice({
+      title: `Оплата ${selectedPrice} Stars`,
+      description: `Попробуй удачу за ${selectedPrice} звёзд!`,
+      payload: payload,
+      provider_token: provider_token,
+      currency: "USD",
+      prices: [{label: `${selectedPrice} Stars`, amount: selectedPrice * 100}],
+      start_parameter: "start_roulette",
+      photo_url: "https://example.com/roulette.png",
+      photo_width: 100,
+      photo_height: 100,
+      need_email_address: false
+    });
+  });
+
+  Telegram.WebApp.onEvent("invoiceClosed", function(event) {
+    if (event.status === "paid") {
+      spinning = true;
+      const prize = "nothing_drop.png";
+      const idx = fullGifts.map((v,i)=>v===prize?i:-1).filter(i=>i!==-1)[0] + 5*gifts.length;
+      const offset = idx*120 - (document.getElementById("reel").offsetWidth/2 - 60);
+      gsap.to(giftsTrack, {
+        x: -offset,
+        duration: 6,
+        ease: "power5.inOut",
+        onComplete(){
+          document.getElementById("modal").style.display="flex";
+          document.getElementById("modalLottie").innerHTML="";
+          lottie.loadAnimation({
+            container:document.getElementById("modalLottie"),
+            renderer:"svg",loop:true,autoplay:true,
+            path:"https://lottie.host/2e7b308e-92b6-495c-a96b-cf93e02eb7b4/BiwZQ7vQaf.json"
+          });
+        }
+      });
+    }
+  });
+
+  document.getElementById("closeModal").onclick = () => {
+    document.getElementById("modal").style.display="none";
+    gsap.set(giftsTrack,{x:0});
+    spinning=false;
+  };
+
+  const emblaTrack = document.getElementById("emblaTrack");
+  gifts.forEach(g => {
+    const slide = document.createElement("div");
+    slide.className = "embla__slide";
+    const img = document.createElement("img");
+    img.src = g;
+    slide.appendChild(img);
+    emblaTrack.appendChild(slide);
+  });
+
+  EmblaCarousel(document.getElementById("embla"), {
+    loop: false,
+    align: "start",
+    dragFree: true
+  });
+
+  updateProfile();
+  changeTab(1);
+</script>
+
+  
+  
 </body>
 </html>
